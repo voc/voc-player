@@ -67,3 +67,20 @@ We recommend the following CSS for correct 16:9 player ratio:
 ```
 
 See *examples/staticJs/index.html* for a working example.
+
+
+## Build
+Install dependencies
+```
+npm ci
+```
+
+For a dev build
+```bash
+npm run dev
+```
+
+For a production build
+```bash
+npm run build
+```
