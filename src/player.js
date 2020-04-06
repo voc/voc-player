@@ -43,15 +43,23 @@ const buildOpts = (opts) => {
     plugins: plugins,
     shakaConfiguration: {
       abr: {
-        defaultBandwidthEstimate: 1000000
+        defaultBandwidthEstimate: 1000000,
       },
       streaming: {
-        rebufferingGoal: 12,
         jumpLargeGaps: true,
 
-        // Todo: handle streaming failure
-        failureCallback: function() {
-         console.log("streaming failure callback", arguments)
+        // TODO: handle streaming failure
+        failureCallback: function(event) {
+         console.log("streaming failure", event)
+        }
+      },
+      manifest: {
+        // TODO: investigate why this is necessary to enable fast start of playback
+        // The presentationdelay in our manifest is set to the same value
+        // which suggests that shaka parses the value incorrectly
+        dash: {
+          defaultPresentationDelay: 3,
+          ignoreSuggestedPresentationDelay: true
         }
       }
     },
@@ -77,6 +85,8 @@ const buildOpts = (opts) => {
 
 export default class Player extends Clappr.Player {
   constructor(opts) {
-    super(buildOpts(opts));
+    const clapprConfig = buildOpts(opts);
+    console.log("clappr config", clapprConfig)
+    super(clapprConfig);
   }
 }
