@@ -9,7 +9,7 @@ Copy the embed folder to your webpage and embed the player as follows:
 ```html
 ...
 <div class="playerWrap">
-  <iframe class="player" src="embed/index.html?stream=mystream"></iframe>
+  <iframe class="player" src="embed/index.html?stream=mystream" frameborder="0" allowfullscreen></iframe>
 </div>
 ...
 ```
@@ -43,7 +43,7 @@ See *examples/iframe/index.html* for a working example.
 <script src="player.js"></script>
 <script src="myplugin.js"></script>
 <script>
-  new VOCPlayer({
+  new VOCPlayer.default({
     // C3VOC specific options
     vocStream: "mystream",
 
@@ -63,6 +63,9 @@ We recommend the following CSS for correct 16:9 player ratio:
 #player > [data-player] {
   padding-bottom: 56.25%;
   height: auto !important;
+}
+#player > .fullscreen {
+  padding-bottom: 0;
 }
 ```
 
