@@ -6,6 +6,10 @@ module.exports = [
 // Generate HTML for iframe-embed
 {
   entry: path.resolve(__dirname, "src/embed.js"),
+  output: {
+    filename: "[name].[contenthash].js",
+    path: path.resolve(__dirname, "embed"),
+  },
   devtool: "source-map",
   resolve: {
     extensions: [".js"],
@@ -18,27 +22,36 @@ module.exports = [
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       title: "C3VOC Player",
-      template: "src/embed.html"
+      template: "src/embed.html",
+      cache: false,
     }),
   ],
   module: {
     rules: [{
       test: /\.jsx?$/,
       exclude: /node_modules/,
-      use: {
-        loader: "babel-loader"
-      }
+      use: ["babel-loader"]
+    }, {
+      test: /\.s[ac]ss$/i,
+      use: [
+        "style-loader",
+        "css-loader",
+        "sass-loader",
+      ],
+      include: path.resolve(__dirname, 'src'),
     }]
-  },
-  output: {
-    filename: "[name].[contenthash].js",
-    path: path.resolve(__dirname, "embed"),
   },
 },
 // Generate player library for js consumption
 {
   entry: path.resolve(__dirname, "src/player.js"),
   devtool: "source-map",
+  output: {
+    filename: "player.js",
+    path: path.resolve(__dirname, "dist"),
+    library: "VOCPlayer",
+    libraryTarget: "umd"
+  },
   resolve: {
     extensions: [".js"],
     modules: [
@@ -53,15 +66,15 @@ module.exports = [
     rules: [{
       test: /\.jsx?$/,
       exclude: /node_modules/,
-      use: {
-        loader: "babel-loader"
-      }
+      use: ["babel-loader"]
+    }, {
+      test: /\.s[ac]ss$/i,
+      use: [
+        "style-loader",
+        "css-loader",
+        "sass-loader",
+      ],
+      include: path.resolve(__dirname, 'src'),
     }]
-  },
-  output: {
-    filename: "player.js",
-    path: path.resolve(__dirname, "dist"),
-    library: "VOCPlayer",
-    libraryTarget: "umd"
   },
 }];

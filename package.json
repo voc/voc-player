@@ -2,9 +2,12 @@
   "name": "voc-player",
   "version": "1.0.0",
   "description": "C3VOC HTML5 player component",
+  "browserslist": [
+    "defaults"
+  ],
   "dependencies": {
-    "@c3voc/clappr-audio-track-selector": "^0.2.1",
-    "@c3voc/clappr-level-selector": "^0.2.0",
+    "@c3voc/clappr-audio-track-selector": "^0.2.3",
+    "@c3voc/clappr-level-selector": "^0.2.1",
     "@c3voc/dash-shaka-playback": "^2.3.3",
     "clappr": "^0.3.12",
     "level-selector": "^0.2.0"
@@ -14,14 +17,14 @@
     "@babel/core": "^7.9.0",
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/plugin-transform-runtime": "^7.2.0",
-    "@babel/preset-env": "^7.9.0",
+    "@babel/preset-env": "^7.9.5",
     "@babel/register": "^7.9.0",
-    "ava": "^3.5.2",
+    "ava": "^3.6.0",
     "babel-loader": "^8.1.0",
     "clean-webpack-plugin": "^3.0.0",
-    "css-loader": "^3.4.2",
+    "css-loader": "^3.5.2",
     "html-loader": "^1.1.0",
-    "html-webpack-plugin": "^4.0.4",
+    "html-webpack-plugin": "^4.2.0",
     "less": "^3.11.1",
     "less-loader": "^5.0.0",
     "node-sass": "^4.13.1",

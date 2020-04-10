@@ -1,10 +1,10 @@
+import "./style.scss";
 import url from "url"
 import {Player, Events, BaseObject} from "clappr";
 import DashShakaPlayback from "@c3voc/dash-shaka-playback";
 import LevelSelector from "@c3voc/clappr-level-selector";
-// import LevelSelector from "level-selector";
-
 import AudioTrackSelector from "@c3voc/clappr-audio-track-selector";
+
 
 import ErrorPlugin from "plugins/error";
 
@@ -58,7 +58,7 @@ export default class VOCPlayer extends BaseObject {
   _buildConfig(options) {
 
     // Allow custom plugins
-    let plugins = [LevelSelector, AudioTrackSelector, DashShakaPlayback, ErrorPlugin];
+    let plugins = [AudioTrackSelector, LevelSelector, DashShakaPlayback, ErrorPlugin];
     if (options.plugins && options.plugins.length) {
       plugins = plugins.concat(options.plugins);
     }
@@ -84,6 +84,9 @@ export default class VOCPlayer extends BaseObject {
             ignoreSuggestedPresentationDelay: true,
           }
         }
+      },
+      audioTrackSelectorConfig: {
+        title: "Language",
       },
       levelSelectorConfig: {
         labelCallback: function(playbackLevel, customLabel) {
@@ -144,7 +147,7 @@ export default class VOCPlayer extends BaseObject {
       clearTimeout(this._recovery.timeout);
     }
 
-    console.log("got error", err.code, `retry in ~${this.timeout}s`, clearOverlay);
+    console.log("got error", err.code, `retry in ~${this.timeout}s`);
 
     // Partially random delay
     const timeout = 0.6 * this.timeout + 0.4 * this.timeout * Math.random();
