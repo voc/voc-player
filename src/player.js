@@ -21,13 +21,15 @@ const selectSource = (stream) => {
   // HLS playlist
   if (hasMSE || document.createElement('video').canPlayType('application/vnd.apple.mpegURL') != "") {
     return {
-      source: `//cdn.c3voc.de/hls/${stream}_native_hd.m3u8`
+      source: `//cdn.c3voc.de/hls/${stream}_native_hd.m3u8`,
+      mimeType: "application/vnd.apple.mpegURL"
     };
   }
 
   // WebM fallback
   return {
     source: `//cdn.c3voc.de/${stream}_native_hd.webm`,
+    mimeType: "video/webm"
   };
 }
 
@@ -40,19 +42,17 @@ const DEFAULT_TIMEOUT = 5;
 
 export default class VOCPlayer extends BaseObject {
   constructor(options) {
-    if (!options.vocStream) {
-      throw new Error("Player: vocStream is a required option");
-    }
-
     super();
     this.timeout = DEFAULT_TIMEOUT;
     this.maxTimeout = 10;
-    const source = this._source = selectSource(options.vocStream);
     const config = this._options = this._buildConfig(options);
     const player = this._player = new Player(config);
-
     this._addEventListeners();
-    player.load(source)
+
+    if (options.vocStream) {
+      const source = this._streamSource = selectSource(options.vocStream);
+      player.load(source);
+    }
   }
 
   _buildConfig(options) {
@@ -107,7 +107,7 @@ export default class VOCPlayer extends BaseObject {
         title: "Quality"
       },
       errorPlugin: {
-        text: 'Stream offline',
+        text: "Stream offline",
         onError: this._handleError.bind(this)
       },
     });
@@ -214,10 +214,10 @@ export default class VOCPlayer extends BaseObject {
     if (!isMuted)
       this._player.mute();
 
-    this._player.configure({
-      source: this._source,
+    this._player.configure(this._streamSource ? {
+      source: this._streamSource,
       autoPlay: true,
-    });
+    } : this._player.options.sources);
 
     if (!isMuted)
       this._player.unmute();
