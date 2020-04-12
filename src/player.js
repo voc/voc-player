@@ -63,11 +63,10 @@ export default class VOCPlayer extends BaseObject {
       plugins = plugins.concat(options.plugins);
     }
 
-    return Object.assign({}, options, {
+    return Object.assign({
       disableErrorScreen: true,
       width: "100%",
       height: "100%",
-      plugins: plugins,
       shakaConfiguration: {
         abr: {
           defaultBandwidthEstimate: 1000000,
@@ -110,6 +109,8 @@ export default class VOCPlayer extends BaseObject {
         text: "Stream offline",
         onError: this._handleError.bind(this)
       },
+    }, options, {
+      plugins: plugins
     });
   }
 
