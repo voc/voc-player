@@ -9,8 +9,7 @@
     "@c3voc/clappr-audio-track-selector": "^0.2.3",
     "@c3voc/clappr-level-selector": "^0.2.1",
     "@c3voc/dash-shaka-playback": "^2.3.3",
-    "clappr": "^0.3.12",
-    "level-selector": "^0.2.0"
+    "clappr": "^0.3.12"
   },
   "main": "dist/player.js",
   "devDependencies": {
