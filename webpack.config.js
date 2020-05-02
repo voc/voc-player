@@ -22,7 +22,7 @@ module.exports = [
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       title: "C3VOC Player",
-      template: "src/embed.html",
+      template: "src/public/embed.html",
       cache: false,
     }),
   ],
@@ -44,7 +44,7 @@ module.exports = [
 },
 // Generate player library for js consumption
 {
-  entry: path.resolve(__dirname, "src/player.js"),
+  entry: path.resolve(__dirname, "src/library.js"),
   devtool: "source-map",
   output: {
     filename: "player.js",

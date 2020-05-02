@@ -1,4 +1,4 @@
-import Player from "player";
+import Player from "lib/player";
 
 const deserialize = (str) => {
   const result = {};

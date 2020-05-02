@@ -53,9 +53,13 @@ You can take a look at <examples/iframe/index.html> for a working example.
   <div id="player"></div>
 </body>
 <script src="player.js"></script>
+<script>
+  // expose Clappr to load additional plugins
+  window.Clappr = window.VOCPlayer
+</script>
 <script src="myplugin.js"></script>
 <script>
-  new VOCPlayer.default({
+  new VOCPlayer.Player({
     // C3VOC specific options
     vocStream: "mystream",
 
@@ -91,18 +95,18 @@ npm install --save voc-player
 
 And import it into your js/ts
 ```
-var VOCPlayer = require("voc-player");
-VOCPlayer({
-    // C3VOC specific options
-    vocStream: "mystream",
+import {Player} from "voc-player";
+Player({
+  // C3VOC specific options
+  vocStream: "mystream",
 
-    // Standard clappr.io Options
-    parentId: "#player",
-    plugins: [MyPlugin],
-    MyPlugin: {
-      ...
-    }
-  });
+  // Standard clappr.io Options
+  parentId: "#player",
+  plugins: [MyPlugin],
+  MyPlugin: {
+    ...
+  }
+});
 ```
 
 

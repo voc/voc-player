@@ -65,15 +65,22 @@ export default class ErrorPlugin extends Clappr.ContainerPlugin {
 
   onError(err) {
     if (!this.container) return;
+
+    const hideOverlay = () => {
+      this.hide();
+      this.container.getPlugin('click_to_pause').enable();
+    };
+
+    // Only show overlay if callback returns true
+    const callback = this.options.errorPlugin.onError;
+    if (callback && typeof(callback) === "function") {
+      if (!callback(err, hideOverlay)) {
+        console.log("skipping overlay");
+        return;
+      }
+    }
+
     this.show();
     this.container.getPlugin('click_to_pause').disable();
-
-
-    if (this.options.errorPlugin && this.options.errorPlugin.onError) {
-      this.options.errorPlugin.onError(err, () => {
-        this.hide();
-        this.container.getPlugin('click_to_pause').enable();
-      });
-    }
   }
 };
