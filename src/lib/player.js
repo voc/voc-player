@@ -10,8 +10,10 @@ import {checkMedia} from "lib/util";
 const selectSource = (stream, audioOnly) => {
   const hasMSE = "MediaSource" in window;
 
-  console.log("vp9/vorbis", MediaSource.isTypeSupported('video/webm; codecs="vp9,vorbis"'),
-    "vp9/opus", MediaSource.isTypeSupported('video/webm; codecs="vp9,opus"'));
+  console.log(
+    "vp9/vorbis", hasMSE && MediaSource.isTypeSupported('video/webm; codecs="vp9,vorbis"'),
+    "vp9/opus", hasMSE && MediaSource.isTypeSupported('video/webm; codecs="vp9,opus"')
+  );
 
   // VP9 dash player (preferred in any case)
   if (hasMSE && MediaSource.isTypeSupported('video/webm; codecs="vp9,opus"')) {
