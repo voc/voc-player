@@ -1,8 +1,8 @@
-import "public/style.scss";
 import {Player, Events, BaseObject} from "clappr";
 import DashShakaPlayback from "@c3voc/dash-shaka-playback";
 import LevelSelector from "@c3voc/clappr-level-selector";
 import AudioTrackSelector from "@c3voc/clappr-audio-track-selector";
+import "public/style.scss";
 
 import ErrorPlugin from "lib/error";
 import {checkMedia} from "lib/util";
