@@ -35,13 +35,29 @@
 
   <script src="../../dist/player.js"></script>
   <script>
-    new VOCPlayer.default({
-      // C3VOC specific options
-      vocStream: "sloop",
+    const player = new VOCPlayer.Player({
+      //** C3VOC specific options **
+      vocStream: "stest",
 
-      // Standard clappr.io Options
-      parentId: "#player"
+      //** Standard clappr.io Options **
+      // Use custom source
+      //sources: ["http://cdn.c3voc.de/relive/divoc/8/index.m3u8"],
+
+      // Audio only player
+      //audioOnly: true,
+
+      // Set a custom poster
+      //poster: "http://cdn.c3voc.de/thumbnail/sloop/poster.jpeg",
+
+      // Enable autoplay
+      //autoPlay: true,
+
+      // Assign parent by id
+      //parentId: "#player"
     })
+
+    // Or attach asynchronously
+    player.attachTo(document.getElementById("player"));
   </script>
 </body>
 </html>

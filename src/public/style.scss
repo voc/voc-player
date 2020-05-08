@@ -20,3 +20,11 @@ button.media-control-button[data-hd-indicator] {
 .spinner-three-bounce[data-spinner] > div {
 	background-color: #ccc;
 }
+
+// Fade out watermark with media control
+.clappr-watermark[data-watermark] {
+	transition: opacity 0.5s ease-out;
+	&.clappr-watermark-hide{
+		opacity: 0;
+	}
+}

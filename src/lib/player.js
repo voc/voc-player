@@ -2,6 +2,7 @@ import {Player, Events, BaseObject} from "clappr";
 import DashShakaPlayback from "@c3voc/dash-shaka-playback";
 import LevelSelector from "@c3voc/clappr-level-selector";
 import AudioTrackSelector from "@c3voc/clappr-audio-track-selector";
+import watermark from "public/watermark";
 import "public/style.scss";
 
 import ErrorPlugin from "lib/error";
@@ -137,6 +138,10 @@ export default class VOCPlayer extends BaseObject {
         text: "Stream offline",
         onError: this._handleError.bind(this)
       },
+      hideMediaControlDelay: 1000,
+      position: "top-left",
+      watermark: watermark,
+      watermarkLink: "https://c3voc.de"
     }, options, {
       plugins: plugins
     });
@@ -162,7 +167,24 @@ export default class VOCPlayer extends BaseObject {
     this.listenTo(this._player, Events.PLAYER_STOP, this._handleStop);
     this.listenTo(core, Events.CORE_ACTIVE_CONTAINER_CHANGED, this._containerChanged);
     this.listenTo(this._container, Events.CONTAINER_STATE_BUFFERFULL, this._handleBufferFull)
-    this.listenTo(this._container, Events.CONTAINER_OPTIONS_CHANGE, () => {console.log("options changed")})
+    this.listenTo(this._container, Events.CONTAINER_MEDIACONTROL_HIDE, this._handleMediaControlHide);
+    this.listenTo(this._container, Events.CONTAINER_MEDIACONTROL_SHOW, this._handleMediaControlShow);
+  }
+
+  /**
+   * Hide watermark together with media control
+   */
+  _handleMediaControlHide() {
+    const watermark = this._container.$el.find(".clappr-watermark[data-watermark]");
+    watermark.addClass("clappr-watermark-hide");
+  }
+
+  /**
+   * Show watermark together with media control
+   */
+  _handleMediaControlShow() {
+    const watermark = this._container.$el.find(".clappr-watermark[data-watermark]");
+    watermark.removeClass("clappr-watermark-hide");
   }
 
   // Partially random delay
