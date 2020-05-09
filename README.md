@@ -116,9 +116,12 @@ You can override all of those options, however doing so may break the player une
 
 ### voc-player custom options
 #### Stream sources
-Add ```vocStream: s1``` to automatically choose the correct source URLs for a C3VOC livestream with name s1.
+Add ```vocStream: "$stream"``` to play a C3VOC livestream with name $stream.
 
 You can query <https://streaming.media.ccc.de/streams/v2.json> to find out which stream name a conference room may be using.
+
+#### Lecture sources
+Add ```vocLecture: "$slug"``` to play a lecture from media.ccc.de with the slug $slug.
 
 ### standard clappr options
 
