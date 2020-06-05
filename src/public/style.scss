@@ -24,7 +24,21 @@ button.media-control-button[data-hd-indicator] {
 // Fade out watermark with media control
 .clappr-watermark[data-watermark] {
 	transition: opacity 0.5s ease-out;
+	width: 8%;
+	min-width: 50px;
+	max-width: 100px;
 	&.clappr-watermark-hide{
 		opacity: 0;
+	}
+}
+
+.clappr-watermark[data-watermark-top-left]{
+	top: 0px;
+	left: 15px;
+	text-align: left;
+
+	@media (min-width: 768px) {
+		top: 10px;
+		left: 30px;
 	}
 }
