@@ -6,7 +6,7 @@ import {getMediaLectureSources} from "lib/util";
  * @param {boolean} audioOnly
  * @param {function} errorHandler
  */
-export const getStreamConfig = (stream, audioOnly, errorHandler) => {
+export const getStreamConfig = (stream, audioOnly, preferredAudioLanguage, errorHandler) => {
   // Keep a tab on whether there are still browsers where we need vp9,vorbis vs vp9,opus
   const hasMSE = "MediaSource" in window;
   console.log(
@@ -47,6 +47,7 @@ export const getStreamConfig = (stream, audioOnly, errorHandler) => {
       source: `//cdn.c3voc.de/dash/${stream}/manifest.mpd`,
     };
     config.shakaConfiguration = {
+      preferredAudioLanguage: preferredAudioLanguage,
       abr: {
         defaultBandwidthEstimate: 1000000,
       },

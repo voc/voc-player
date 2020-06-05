@@ -56,7 +56,7 @@ export default class VOCPlayer extends BaseObject {
 
     let configPromise = Promise.resolve({});
     if (options.vocStream) {
-      configPromise = getStreamConfig(options.vocStream, options.audioOnly, this._handleError.bind(this));
+      configPromise = getStreamConfig(options.vocStream, options.audioOnly, options.preferredAudioLanguage, this._handleError.bind(this));
     } else if (options.vocLecture) {
       configPromise = getLectureConfig(options.vocLecture);
     }
