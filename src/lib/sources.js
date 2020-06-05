@@ -17,7 +17,7 @@ export const getStreamConfig = (stream, audioOnly, errorHandler) => {
   // Stream specific config
   const config = {
     levelSelectorConfig: {
-      labelCallback: function(playbackLevel, customLabel) {
+      labelCallback: function(playbackLevel) {
         // playbackLevel.videoBandwidth is set for DASH
         // playbackLevel.level.bitrate is set for HLS
         var bw = playbackLevel.videoBandwidth || playbackLevel.level.bitrate;
@@ -33,9 +33,6 @@ export const getStreamConfig = (stream, audioOnly, errorHandler) => {
         }
       },
       title: "Quality"
-    },
-    audioTrackSelectorConfig: {
-      title: "Language",
     },
     disableErrorScreen: true,
     errorPlugin: {

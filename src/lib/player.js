@@ -68,7 +68,19 @@ export default class VOCPlayer extends BaseObject {
         hideMediaControlDelay: 1000,
         position: "top-left",
         watermark: watermark,
-        watermarkLink: "https://c3voc.de"
+        watermarkLink: "https://c3voc.de",
+        levelSelectorConfig: {
+          labelCallback: function(level) {
+            let height = "unknown";
+            if (level.height) height = level.height;
+            else if (level.level && level.level.height) height = level.level.height;
+            return height + "p";
+          },
+          title: "Quality"
+        },
+        audioTrackSelectorConfig: {
+          title: "Language",
+        },
       }, sourceConfig, options, {
         plugins: plugins
       });
