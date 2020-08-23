@@ -11,8 +11,14 @@
     }
     .container{
       max-width: 1400px;
-      width: 70%;
-      margin: 0 auto;
+      margin: 0 10px;
+    }
+
+    @media (min-width: 1024px) {
+      .container{
+        width: 70%;
+        margin: 0 auto;
+      }
     }
 
     #player > [data-player] {
@@ -39,6 +45,7 @@
       //** C3VOC specific options **
       vocStream: "stest",
       //vocLecture: "36c3-10652-bahnmining_-_punktlichkeit_ist_eine_zier",
+      //preferredAudioLanguage: "translated", // untranslated, translated, translated2...
 
       //** Standard clappr.io Options **
       // Use custom source

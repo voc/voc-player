@@ -152,13 +152,34 @@ export default class VOCPlayer extends BaseObject {
     }
 
     const timeout = this._getTimeout();
-    console.log("got error", error.code, `retrying in ${Math.round(timeout)}s`);
+
+    // Determine error action
+    console.log("got error", error, `retrying in ${Math.round(timeout)}s`);
     this._recovery = {
       clearOverlay,
       state: "restarting",
       timeout: setTimeout(this._waitForMedia.bind(this), timeout * 1000),
     }
-    return true;
+
+    // Provide mighty helpful error message
+    if (error.origin == "dash_shaka_playback" && error.raw.code == 1001 ||
+      error.origin == "hls" && error.raw.response.code == 404) {
+      return {
+        title: "Stream is offline",
+        subtitle: "We will be right back",
+      };
+    } else if (error.origin == "dash_shaka_playback" && error.raw.code == 1002 ||
+      error.origin == "hls" && error.raw.response.code == 0) {
+      return {
+        title: "A network error ocurred",
+        subtitle: "Please check your internet connection",
+      };
+    }
+
+    return {
+      title: "Oh no, an unknown error occured",
+      subtitle: "Please try reloading the page",
+    };
   }
 
   /**

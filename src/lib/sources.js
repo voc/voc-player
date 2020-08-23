@@ -9,10 +9,6 @@ import {getMediaLectureSources} from "lib/util";
 export const getStreamConfig = (stream, audioOnly, preferredAudioLanguage, errorHandler) => {
   // Keep a tab on whether there are still browsers where we need vp9,vorbis vs vp9,opus
   const hasMSE = "MediaSource" in window;
-  console.log(
-    "vp9/vorbis", hasMSE && MediaSource.isTypeSupported('video/webm; codecs="vp9,vorbis"'),
-    "vp9/opus", hasMSE && MediaSource.isTypeSupported('video/webm; codecs="vp9,opus"')
-  );
 
   // Stream specific config
   const config = {
@@ -36,7 +32,6 @@ export const getStreamConfig = (stream, audioOnly, preferredAudioLanguage, error
     },
     disableErrorScreen: true,
     errorPlugin: {
-      text: "Stream offline",
       onError: errorHandler
     },
   };

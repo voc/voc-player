@@ -20,13 +20,12 @@ export default class ErrorPlugin extends Clappr.ContainerPlugin {
     this._err && this._err.remove()
   }
 
-  show() {
+  show(options) {
     const $ = Clappr.$
     this.hide();
 
-    let txt = 'A fatal error occured.';
-    if (this.options.errorPlugin && this.options.errorPlugin.text)
-      txt = this.options.errorPlugin.text;
+    const title = options && options.title || "Oh no, we encountered an error";
+    const subtitle = options && options.subtitle || "Please reload the page";
 
     this._err = $('<div>')
       .css({
@@ -50,13 +49,13 @@ export default class ErrorPlugin extends Clappr.ContainerPlugin {
         'bottom': 0
       })
       .append($('<h2>')
-        .text(txt)
+        .text(title)
         .css({
-          'font-size': '200%',
+          'font-size': '2em',
         }))
-      .append($('<p>').text('We will be right back')
+      .append($('<p>').text(subtitle)
         .css({
-          'font-size': '120%',
+          'font-size': '1.2em',
           'margin': '15px',
         }));
     this._err.append(wrap);
@@ -73,14 +72,12 @@ export default class ErrorPlugin extends Clappr.ContainerPlugin {
 
     // Only show overlay if callback returns true
     const callback = this.options.errorPlugin.onError;
+    let opts = null;
     if (callback && typeof(callback) === "function") {
-      if (!callback(err, hideOverlay)) {
-        console.log("skipping overlay");
-        return;
-      }
+      opts = callback(err, hideOverlay);
     }
 
-    this.show();
+    this.show(opts);
     this.container.getPlugin('click_to_pause').disable();
   }
 };
