@@ -80,8 +80,9 @@ We recommend the following CSS for correct 16:9 player ratio:
   padding-bottom: 56.25%;
   height: auto !important;
 }
-#player > .fullscreen {
+#player > .fullscreen[data-player] {
   padding-bottom: 0;
+  height: 100% !important;
 }
 ```
 
