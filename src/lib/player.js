@@ -12,6 +12,16 @@ import {getLectureConfig, getStreamConfig} from "lib/sources";
 const DEFAULT_TIMEOUT = 5;
 const MAX_TIMEOUT = 15;
 
+const isShakaError = (error, code) => {
+  return error.origin == "dash_shaka_playback" && (
+    error.raw.code == code ||
+    (error.raw.detail && error.raw.detail.code == code))
+}
+
+const isHlsError = (error, code) => {
+  return error.origin == "hls" && error.raw.response.code == code
+}
+
 /**
  * Shaka-Player wrapper
  */
@@ -161,15 +171,14 @@ export default class VOCPlayer extends BaseObject {
       timeout: setTimeout(this._waitForMedia.bind(this), timeout * 1000),
     }
 
+
     // Provide mighty helpful error message
-    if (error.origin == "dash_shaka_playback" && error.raw.code == 1001 ||
-      error.origin == "hls" && error.raw.response.code == 404) {
+    if (isShakaError(error, 1001) || isHlsError(error, 404)) {
       return {
         title: "Stream is offline",
         subtitle: "We will be right back",
       };
-    } else if (error.origin == "dash_shaka_playback" && error.raw.code == 1002 ||
-      error.origin == "hls" && error.raw.response.code == 0) {
+    } else if (isShakaError(error, 1002) || isHlsError(0)) {
       return {
         title: "A network error ocurred",
         subtitle: "Please check your internet connection",
