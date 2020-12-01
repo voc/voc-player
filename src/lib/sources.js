@@ -64,7 +64,7 @@ export const getStreamConfig = (stream, audioOnly, preferredAudioLanguage, error
   } else if (!audioOnly &&
       (hasMSE || document.createElement('video').canPlayType('application/vnd.apple.mpegURL') != "")) {
     config.source = {
-      source: `//cdn.c3voc.de/hls/${stream}_native_hd.m3u8`,
+      source: `//cdn.c3voc.de/hls/${stream}/native_hd.m3u8`,
       mimeType: "application/vnd.apple.mpegURL"
     };
 
