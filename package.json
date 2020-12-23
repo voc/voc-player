@@ -1,6 +1,6 @@
 {
   "name": "voc-player",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "C3VOC HTML5 player component",
   "browserslist": [
     "defaults"
