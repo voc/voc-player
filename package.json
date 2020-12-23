@@ -50,6 +50,13 @@
       "esm"
     ]
   },
+  "files": [
+    "dist/",
+    "embed/",
+    "examples/",
+    "LICENSE",
+    "README.md"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/voc/voc-player.git"
