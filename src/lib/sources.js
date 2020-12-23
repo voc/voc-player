@@ -36,8 +36,9 @@ export const getStreamConfig = (stream, audioOnly, preferredAudioLanguage, error
     },
   };
 
-  // VP9 dash player (preferred in any case)
-  if (hasMSE && MediaSource.isTypeSupported('video/webm; codecs="vp9,opus"')) {
+  // VP9 dash player (avoid in firefox, because track-switching is broken there)
+  const isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
+  if (!isFirefox && hasMSE && MediaSource.isTypeSupported('video/webm; codecs="vp9,opus"')) {
     config.source = {
       source: `//cdn.c3voc.de/dash/${stream}/manifest.mpd`,
     };
