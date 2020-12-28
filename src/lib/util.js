@@ -1,3 +1,5 @@
+import {serialize} from "lib/url";
+
 /**
  * Checks status of http media file
  * @param {*} url
@@ -32,14 +34,17 @@ const queryGraph = function(operationName, query, variables={}) {
   const headers = new Headers();
 
   // Do fetch
-  return fetch("https://media.ccc.de/graphql", {
-    method: "POST",
+  const shortened = query.replace(/\s+/g, " ");
+  const urlQuery = serialize({
+    query: shortened,
+    operation: operationName,
+    variables: JSON.stringify(variables),
+  });
+  return fetch(`https://media.ccc.de/graphql?${urlQuery}`, {
+    method: "GET",
     headers: {
-      "Accept": "application/json",
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({operationName, query, variables})
-
+      "Accept": "application/json"
+    }
   // Parse json
   }).then((res) => {
     const reader = res.body.getReader();
@@ -61,25 +66,21 @@ const queryGraph = function(operationName, query, variables={}) {
  */
 export const getMediaLectureSources = function(slug) {
   return queryGraph("LectureBySlug", `
-    query LectureBySlug {
-      lectureBySlug(slug: "${slug}") {
+    query LectureBySlug($slug: ID!) {
+      lecture: lectureBySlug(slug: $slug) {
         originalLanguage
-        videos {
-          label
-          url
-          mimeType
-        }
+        timelens { thumbnailsUrl, timelineUrl }
+        videos { label, source: url, mimeType }
+        images { posterUrl }
+        relive
+        playerConfig
       }
     }
-  `).then(res => {
-    if (!res.data.lectureBySlug)
+  `, { slug }).then(res => {
+    if (!res.data.lecture)
       throw new Error("Lecture could not be found");
 
-    return res.data.lectureBySlug.videos.map(({label, url, mimeType}) => ({
-      label,
-      mimeType,
-      source: url
-    }))
+    return res.data.lecture
   });
 }
 

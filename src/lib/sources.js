@@ -91,10 +91,15 @@ export const getStreamConfig = (stream, audioOnly, preferredAudioLanguage, error
  * Determines config specific to media.ccc.de lecture
  * @param {string} slug
  */
-export const getLectureConfig = function(slug) {
-  return getMediaLectureSources(slug).then(sources => {
+export const getLectureConfig = function(slug, reliveOffset) {
+  return getMediaLectureSources(slug).then(data => {
     return {
-      sources: sources,
+      sources: data.videos || data.relive?.playlist,
+      poster: data.images?.posterUrl,
+      timelens: data.timelens,
+      playback: {
+        externalTracks: data.playerConfig?.subtitles
+      },
       levelSelectorConfig: {
         labelCallback: function(playbackLevel, customLabel) {
           console.log("labelCallback", arguments);

@@ -219,8 +219,7 @@ export default class VOCPlayer extends BaseObject {
    * Skips to the live-edge after recovery
    */
   _handleBufferFull() {
-    // TODO: avoid for non-live content
-    if (this._recovery) {
+    if (this._recovery && this._container.playback.getPlaybackType() == "live") {
       console.log("seeking to end for recovery");
       const seekTo = Math.max(this._player.getDuration() - 6, 0);
       this._player.seek(seekTo);
