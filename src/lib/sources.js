@@ -12,6 +12,7 @@ export const getStreamConfig = (stream, audioOnly, preferredAudioLanguage, error
 
   // Stream specific config
   const config = {
+    poster: `//cdn.c3voc.de/thumbnail/${stream}/poster.jpeg`,
     levelSelectorConfig: {
       labelCallback: function(playbackLevel) {
         // playbackLevel.videoBandwidth is set for DASH
