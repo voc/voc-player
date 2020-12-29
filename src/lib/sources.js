@@ -95,7 +95,7 @@ export const getStreamConfig = (stream, audioOnly, preferredAudioLanguage, error
 export const getLectureConfig = function(slug, reliveOffset) {
   return getMediaLectureSources(slug).then(data => {
     return {
-      sources: data.videos || data.relive?.playlist,
+      sources: data.videos || data.relive?.playlistCut || data.relive?.playlist,
       poster: data.images?.posterUrl,
       timelens: data.timelens,
       playback: {
