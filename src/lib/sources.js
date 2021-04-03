@@ -6,7 +6,7 @@ import {getMediaLectureSources} from "lib/util";
  * @param {boolean} audioOnly
  * @param {function} errorHandler
  */
-export const getStreamConfig = (stream, audioOnly, preferredAudioLanguage, errorHandler) => {
+export const getStreamConfig = (stream, audioOnly, h264Only, preferredAudioLanguage, errorHandler) => {
   // Keep a tab on whether there are still browsers where we need vp9,vorbis vs vp9,opus
   const hasMSE = "MediaSource" in window;
 
@@ -25,8 +25,10 @@ export const getStreamConfig = (stream, audioOnly, preferredAudioLanguage, error
         else if(bw <= 800000) {
           return "SD";
         }
-        else {
+        else if(bw <= 5000000) {
           return "HD";
+        } else {
+          return "Source";
         }
       },
       title: "Quality"
@@ -39,7 +41,7 @@ export const getStreamConfig = (stream, audioOnly, preferredAudioLanguage, error
 
   // VP9 dash player (avoid in firefox, because track-switching is broken there)
   const isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
-  if (!isFirefox && hasMSE && MediaSource.isTypeSupported('video/webm; codecs="vp9,opus"')) {
+  if (!isFirefox && !h264Only && hasMSE && MediaSource.isTypeSupported('video/webm; codecs="vp9,opus"')) {
     config.source = {
       source: `//cdn.c3voc.de/dash/${stream}/manifest.mpd`,
     };
