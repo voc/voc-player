@@ -65,7 +65,6 @@ export const getStreamConfig = (stream, audioOnly, h264Only, preferredAudioLangu
       onError: errorHandler
     },
     vocConfigUpdate: (player) => {
-      console.log(document.visibilityState, player.isPlaying())
       if (document.visibilityState !== "visible" || player.isPlaying())
         return;
       const posterUrl = `//cdn.c3voc.de/thumbnail/${stream}/poster.jpeg?t=${Date.now()}`;
