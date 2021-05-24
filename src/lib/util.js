@@ -5,7 +5,7 @@ import {serialize} from "lib/url";
  * @param {*} url
  * @param {*} callback
  */
-export const checkMedia = function(url, callback) {
+export function checkMedia(url, callback) {
   if (!callback || typeof(callback) !== "function") {
     throw new Error(`Excepted function, got '${callback}'`)
   }
@@ -23,6 +23,20 @@ export const checkMedia = function(url, callback) {
   xhr.open("GET", url, true);
   xhr.send(null);
 };
+
+/**
+ * Load image in the background.
+ * @param {*} url image url
+ * @returns Promise Fulfilled when image has finished loading
+ */
+export function loadImage(url) {
+  return new Promise((resolve, reject) => {
+    const imageElement = new Image();
+    imageElement.onload = () => { resolve(); };
+    imageElement.onerror = () => { reject(); };
+    imageElement.src = url;
+  });
+}
 
 /**
  * Perfoms query against media.ccc.de GraphQL API
@@ -64,7 +78,7 @@ const queryGraph = function(operationName, query, variables={}) {
  * Finds player sources for a media.ccc.de lecture by slug
  * @param {string} slug
  */
-export const getMediaLectureSources = function(slug) {
+export function getMediaLectureSources(slug) {
   return queryGraph("LectureBySlug", `
     query LectureBySlug($slug: ID!) {
       lecture: lectureBySlug(slug: $slug) {

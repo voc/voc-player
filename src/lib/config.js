@@ -1,4 +1,31 @@
-import {getMediaLectureSources} from "lib/util";
+import { getMediaLectureSources, loadImage } from "lib/util";
+import watermark from "public/watermark";
+
+/**
+ * Generate clappr base config
+ */
+export const getBaseConfig = () => {
+  return {
+    width: "100%",
+    height: "100%",
+    hideMediaControlDelay: 1000,
+    position: "top-left",
+    watermark: watermark,
+    watermarkLink: "https://c3voc.de",
+    levelSelectorConfig: {
+      labelCallback: function (level) {
+        let height = "unknown";
+        if (level.height) height = level.height;
+        else if (level.level && level.level.height) height = level.level.height;
+        return height + "p";
+      },
+      title: "Quality"
+    },
+    audioTrackSelectorConfig: {
+      title: "Language",
+    },
+  }
+}
 
 /**
  * Determines config specifig to C3VOC streaming
@@ -14,7 +41,7 @@ export const getStreamConfig = (stream, audioOnly, h264Only, preferredAudioLangu
   const config = {
     poster: `//cdn.c3voc.de/thumbnail/${stream}/poster.jpeg`,
     levelSelectorConfig: {
-      labelCallback: function(playbackLevel) {
+      labelCallback: function (playbackLevel) {
         // playbackLevel.videoBandwidth is set for DASH
         // playbackLevel.level.bitrate is set for HLS
         var bw = playbackLevel.videoBandwidth || playbackLevel.level.bitrate;
@@ -22,10 +49,10 @@ export const getStreamConfig = (stream, audioOnly, h264Only, preferredAudioLangu
         if (bw <= 100000) {
           return "Slides";
         }
-        else if(bw <= 800000) {
+        else if (bw <= 800000) {
           return "SD";
         }
-        else if(bw <= 5000000) {
+        else if (bw <= 5000000) {
           return "HD";
         } else {
           return "Source";
@@ -37,6 +64,17 @@ export const getStreamConfig = (stream, audioOnly, h264Only, preferredAudioLangu
     errorPlugin: {
       onError: errorHandler
     },
+    vocConfigUpdate: (player) => {
+      console.log(document.visibilityState, player.isPlaying())
+      if (document.visibilityState !== "visible" || player.isPlaying())
+        return;
+      const posterUrl = `//cdn.c3voc.de/thumbnail/${stream}/poster.jpeg?t=${Date.now()}`;
+      loadImage(posterUrl).then(() => {
+        player.configure({
+          poster: posterUrl,
+        })
+      })
+    }
   };
 
   // VP9 dash player (avoid in firefox, because track-switching is broken there)
@@ -64,9 +102,9 @@ export const getStreamConfig = (stream, audioOnly, h264Only, preferredAudioLangu
       }
     };
 
-  // HLS playlist (doesn't work for audio only)
+    // HLS playlist (doesn't work for audio only)
   } else if (!audioOnly &&
-      (hasMSE || document.createElement('video').canPlayType('application/vnd.apple.mpegURL') != "")) {
+    (hasMSE || document.createElement('video').canPlayType('application/vnd.apple.mpegURL') != "")) {
     config.source = {
       source: `//cdn.c3voc.de/hls/${stream}/native_hd.m3u8`,
       mimeType: "application/vnd.apple.mpegURL"
@@ -79,7 +117,7 @@ export const getStreamConfig = (stream, audioOnly, h264Only, preferredAudioLangu
       mimeType: "audio/mp3"
     };
 
-  // WebM fallback
+    // WebM fallback
   } else {
     config.source = {
       source: `//cdn.c3voc.de/${stream}_native_hd.webm`,
@@ -94,7 +132,7 @@ export const getStreamConfig = (stream, audioOnly, h264Only, preferredAudioLangu
  * Determines config specific to media.ccc.de lecture
  * @param {string} slug
  */
-export const getLectureConfig = function(slug, reliveOffset) {
+export const getLectureConfig = function (slug, reliveOffset) {
   return getMediaLectureSources(slug).then(data => {
     return {
       sources: data.videos || data.relive?.playlistCut || data.relive?.playlist,
@@ -104,7 +142,7 @@ export const getLectureConfig = function(slug, reliveOffset) {
         externalTracks: data.playerConfig?.subtitles
       },
       levelSelectorConfig: {
-        labelCallback: function(playbackLevel, customLabel) {
+        labelCallback: function (playbackLevel, customLabel) {
           console.log("labelCallback", arguments);
           // playbackLevel.videoBandwidth is set for DASH
           // playbackLevel.level.bitrate is set for HLS
@@ -113,7 +151,7 @@ export const getLectureConfig = function(slug, reliveOffset) {
           if (bw <= 100000) {
             return "Slides";
           }
-          else if(bw <= 800000) {
+          else if (bw <= 800000) {
             return "SD";
           }
           else {

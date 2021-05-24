@@ -2,12 +2,11 @@ import {Player, Events, BaseObject} from "clappr";
 import DashShakaPlayback from "@c3voc/dash-shaka-playback";
 import LevelSelector from "@c3voc/clappr-level-selector";
 import AudioTrackSelector from "@c3voc/clappr-audio-track-selector";
-import watermark from "public/watermark";
 import "public/style.scss";
 
 import ErrorPlugin from "lib/error";
 import {checkMedia} from "lib/util";
-import {getLectureConfig, getStreamConfig} from "lib/sources";
+import {getBaseConfig, getLectureConfig, getStreamConfig} from "lib/config";
 
 const DEFAULT_TIMEOUT = 5;
 const MAX_TIMEOUT = 15;
@@ -41,12 +40,21 @@ export default class VOCPlayer extends BaseObject {
       } else {
         this.listenToOnce(this._player, Events.PLAYER_READY, this._addEventListeners.bind(this));
       }
+      if (config.vocConfigUpdate) {
+        setInterval(() => config.vocConfigUpdate(this._player), 30000);
+      }
       return this._player;
     })
   }
 
+  /**
+   * Attach player to new container
+   * @param {*} element HTML element
+   */
   attachTo() {
+    console.log("will attach", ...arguments)
     this._playerPromise.then(player => {
+      console.log("attach", ...arguments)
       player.attachTo.apply(player, arguments)
     });
   }
@@ -71,29 +79,9 @@ export default class VOCPlayer extends BaseObject {
       configPromise = getLectureConfig(options.vocLecture);
     }
 
+    // Combine configs
     return configPromise.then((sourceConfig) => {
-      return Object.assign({
-        width: "100%",
-        height: "100%",
-        hideMediaControlDelay: 1000,
-        position: "top-left",
-        watermark: watermark,
-        watermarkLink: "https://c3voc.de",
-        levelSelectorConfig: {
-          labelCallback: function(level) {
-            let height = "unknown";
-            if (level.height) height = level.height;
-            else if (level.level && level.level.height) height = level.level.height;
-            return height + "p";
-          },
-          title: "Quality"
-        },
-        audioTrackSelectorConfig: {
-          title: "Language",
-        },
-      }, sourceConfig, options, {
-        plugins: plugins
-      });
+      return Object.assign(getBaseConfig(), sourceConfig, options, {plugins});
     });
   }
 
