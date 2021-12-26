@@ -101,7 +101,7 @@ export const getStreamConfig = (stream, audioOnly, h264Only, preferredAudioLangu
       }
     };
 
-    // HLS playlist (doesn't work for audio only)
+    // HLS playlist Video
   } else if (!audioOnly &&
     (hasMSE || document.createElement('video').canPlayType('application/vnd.apple.mpegURL') != "")) {
     config.source = {
@@ -109,21 +109,15 @@ export const getStreamConfig = (stream, audioOnly, h264Only, preferredAudioLangu
       mimeType: "application/vnd.apple.mpegURL"
     };
 
-    // MP3 Audio fallback
-  } else if (audioOnly) {
+    // HLS playlist Audio
+  } else if (audioOnly &&
+    (hasMSE || document.createElement('audio').canPlayType('application/vnd.apple.mpegURL') != "")) {
     config.source = {
-      source: `//cdn.c3voc.de/${stream}_native.mp3`,
-      mimeType: "audio/mp3"
-    };
-
-    // WebM fallback
-  } else {
-    config.source = {
-      source: `//cdn.c3voc.de/${stream}_native_hd.webm`,
-      mimeType: "video/webm"
+      source: `${stream}`,
+      mimeType: "application/vnd.apple.mpegURL"
     };
   }
-
+ 
   return Promise.resolve(config);
 }
 
