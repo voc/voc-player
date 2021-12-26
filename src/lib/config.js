@@ -41,15 +41,20 @@ export const getStreamConfig = (stream, audioOnly, h264Only, preferredAudioLangu
   const config = {
     poster: `//cdn.c3voc.de/thumbnail/${stream}/poster.jpeg`,
     levelSelectorConfig: {
+      onLevelsAvailable: function(levels) {
+        return levels.reverse();
+      },
       labelCallback: function (playbackLevel) {
+        //console.log("labelCallback", arguments);
         // playbackLevel.videoBandwidth is set for DASH
         // playbackLevel.level.bitrate is set for HLS
         var bw = playbackLevel.videoBandwidth || playbackLevel.level.bitrate;
-
+        //console.log("bw", bw);
+        
         if (bw <= 100000) {
           return "Slides";
         }
-        else if (bw <= 800000) {
+        else if (bw <= 2000000) {
           return "SD";
         }
         else if (bw <= 5000000) {
