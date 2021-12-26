@@ -49,7 +49,7 @@ export const getStreamConfig = (stream, audioOnly, h264Only, preferredAudioLangu
         if (bw <= 100000) {
           return "Slides";
         }
-        else if (bw <= 800000) {
+        else if (bw <= 900000) {
           return "SD";
         }
         else if (bw <= 5000000) {
