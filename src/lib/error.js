@@ -1,4 +1,4 @@
-import Clappr from "clappr";
+import Clappr from "@clappr/core";
 
 export default class ErrorPlugin extends Clappr.ContainerPlugin {
   get name() { return 'error_plugin' }

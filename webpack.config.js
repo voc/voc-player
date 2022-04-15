@@ -19,7 +19,7 @@ module.exports = [
     ],
   },
   plugins: [
-    new CleanWebpackPlugin(),
+    //new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       title: "C3VOC Player",
       template: "src/public/embed.html",
@@ -60,7 +60,7 @@ module.exports = [
     ],
   },
   plugins: [
-    new CleanWebpackPlugin(),
+    //new CleanWebpackPlugin(),
   ],
   module: {
     rules: [{

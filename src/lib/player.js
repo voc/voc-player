@@ -1,7 +1,7 @@
-import {Player, Events, BaseObject} from "clappr";
-import DashShakaPlayback from "@c3voc/dash-shaka-playback";
-import LevelSelector from "@c3voc/clappr-level-selector";
-import AudioTrackSelector from "@c3voc/clappr-audio-track-selector";
+import {Player, Events, BaseObject} from "@clappr/player";
+//import LevelSelector from "@guzzj/clappr-level-selector-plugin";
+//import AudioTrackSelector from "@c3voc/clappr-audio-track-selector";
+import {Stats, ErrorScreen, Poster} from "@clappr/plugins"
 import "public/style.scss";
 
 import ErrorPlugin from "lib/error";
@@ -32,7 +32,7 @@ export default class VOCPlayer extends BaseObject {
 
     // Async configuration
     this._playerPromise = this._getConfig(options).then(config => {
-      // console.log("got config", config)
+      window.console.log("got confiig", config)
       this._options = config;
       this._player = new Player(this._options);
       if (this._player.core && this._player.core.isReady) {
@@ -52,9 +52,9 @@ export default class VOCPlayer extends BaseObject {
    * @param {*} element HTML element
    */
   attachTo() {
-    console.log("will attach", ...arguments)
+    window.console.log("will attach", ...arguments)
     this._playerPromise.then(player => {
-      console.log("attach", ...arguments)
+      window.console.log("attach", ...arguments)
       player.attachTo.apply(player, arguments)
     });
   }
@@ -65,11 +65,11 @@ export default class VOCPlayer extends BaseObject {
    */
   _getConfig(options) {
     // Allow custom plugins
-    let plugins = [AudioTrackSelector, LevelSelector, DashShakaPlayback, ErrorPlugin];
+    let plugins = [ErrorScreen, Stats, Poster];
     if (options.plugins && options.plugins.length) {
       plugins = plugins.concat(options.plugins);
-      console.log("loading plugins")
-      plugins.forEach((plugin) => console.log(plugin.name, plugin.type))
+      window.console.log("loading plugins")
+      plugins.forEach((plugin) => window.console.log(plugin.name, plugin.type))
     }
 
     let configPromise = Promise.resolve({});
@@ -152,7 +152,7 @@ export default class VOCPlayer extends BaseObject {
     const timeout = this._getTimeout();
 
     // Determine error action
-    console.log("got error", error, `retrying in ${Math.round(timeout)}s`);
+    window.console.log("got error", error, `retrying in ${Math.round(timeout)}s`);
     this._recovery = {
       clearOverlay,
       state: "restarting",
@@ -184,7 +184,7 @@ export default class VOCPlayer extends BaseObject {
    */
   _handlePlay() {
     if (this._recovery) {
-      console.log("soft recovery: play")
+      window.console.log("soft recovery: play")
       this._recovery.clearOverlay();
       clearTimeout(this._recovery.timeout);
       this._recovery = null;
@@ -198,7 +198,7 @@ export default class VOCPlayer extends BaseObject {
    */
   _handleStop(time) {
     if (this._recovery && this._container) {
-      console.log("soft recovery: stop")
+      window.console.log("soft recovery: stop")
       this._container.playback.play.call(this._container.playback);
     }
   }
@@ -208,7 +208,7 @@ export default class VOCPlayer extends BaseObject {
    */
   _handleBufferFull() {
     if (this._recovery && this._container.playback.getPlaybackType() == "live") {
-      console.log("seeking to end for recovery");
+      window.console.log("seeking to end for recovery");
       const seekTo = Math.max(this._player.getDuration() - 6, 0);
       this._player.seek(seekTo);
     }
@@ -220,11 +220,11 @@ export default class VOCPlayer extends BaseObject {
    */
   _handleMediaCheck(success) {
     if (success) {
-      console.log("try playing again, media should be available");
+      window.console.log("try playing again, media should be available");
       this._player.play();
     } else {
       const timeout = this._getTimeout();
-      console.log(`test for media failed, retrying in ~${Math.round(timeout)}s`);
+      window.console.log(`test for media failed, retrying in ~${Math.round(timeout)}s`);
       setTimeout(this._waitForMedia.bind(this), timeout * 1000);
     }
   }
@@ -249,7 +249,7 @@ export default class VOCPlayer extends BaseObject {
    * This is the last resort if soft recovery doesn't work
    */
   reset() {
-    console.log("performing hard reset")
+    window.console.log("performing hard reset")
     this._recovery = null;
 
     const isMuted = this._player.getVolume() == 0;
