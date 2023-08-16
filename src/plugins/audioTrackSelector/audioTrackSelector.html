@@ -1,0 +1,12 @@
+<button data-audio-track-selector-button>Language</button>
+<ul>
+  <% if (title) { %>
+  <li data-title><%= title %></li>
+  <% }; %> <% languages.forEach((language) => { %>
+  <li>
+    <a href="#" data-audio-track-selector-lang="<%= language %>"
+      ><%= language %></a
+    >
+  </li>
+  <% }); %>
+</ul>

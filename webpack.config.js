@@ -39,6 +39,15 @@ module.exports = [
         "sass-loader",
       ],
       include: path.resolve(__dirname, 'src'),
+    }, {
+      test: /\.html$/i,
+      use: [{
+        loader: 'html-loader', 
+        options: {
+          minimize: false,
+        },
+      }],
+      include: path.resolve(__dirname, 'src'),
     }]
   },
 },

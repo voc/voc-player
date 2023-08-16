@@ -42,6 +42,14 @@ export const getStreamConfig = (stream, audioOnly, h264Only, preferredAudioLangu
     poster: `//cdn.c3voc.de/thumbnail/${stream}/poster.jpeg`,
     levelSelectorConfig: {
       labelCallback: function (playbackLevel) {
+        // Parse quality from HLS playlist name
+        if (playbackLevel?.level?.url) {
+          const url = playbackLevel.level.url[0].split("/")
+          const filename = url[url.length - 1]
+          const quality = filename.split(".")[0]
+          return quality
+        }
+
         // playbackLevel.videoBandwidth is set for DASH
         // playbackLevel.level.bitrate is set for HLS
         var bw = playbackLevel.videoBandwidth || playbackLevel.level.bitrate;
