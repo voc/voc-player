@@ -5,8 +5,8 @@ import {
   HTML5Video,
   template,
 } from "@clappr/core";
-import pluginHtml from "!html-loader!./audioTrackSelector.html";
-import pluginStyle from "./audioTrackSelector.scss";
+import pluginHtml from "./audioTrackSelector.html?raw";
+import pluginStyle from "./audioTrackSelector.scss?inline";
 
 export default class AudioTrackSelector extends UICorePlugin {
   static get version() {

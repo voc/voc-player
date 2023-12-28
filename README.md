@@ -3,45 +3,12 @@ C3VOC HTML5-Webplayer based on [clappr](https://github.com/clappr/clappr). Can b
 
 ## Usage
 You can embed the player using a variety of methods. We support the following configurations:
-  - iFrame: Easiest but also least configurable option
-  - Static Javascript: Allows you to pass custom parameters to the Clappr player
-  - CommonJS: Allows you to bundle the player as a library with your own web application
+  - UMD: Using standard javascript and a global object
+  - ES: Using javascript modules
 
 Continue reading for detailed descriptions of each method.
 
-### With an IFrame-Embed
-This is the easiest method, but not very flexible and not recommended for more than one embed per page.
-
-Copy the embed folder to your webpage and embed the player as follows:
-```html
-...
-<div class="playerWrap">
-  <iframe class="player" src="embed/index.html?stream=mystream" frameborder="0" allowfullscreen></iframe>
-</div>
-...
-```
-
-We recommend to use a like CSS the following, to keep the player iframe at a constant 16:9 aspect ratio:
-```css
-.playerWrap{
-  position: relative;
-  padding-bottom: 56.25%;
-}
-.player {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-}
-```
-
-#### Query Parameters
-##### stream
-C3VOC stream name
-
-#### Example
-You can take a look at <examples/iframe/index.html> for a working example.
-
-### With static js
+### With UMD js
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -52,7 +19,7 @@ You can take a look at <examples/iframe/index.html> for a working example.
 <body>
   <div id="player"></div>
 </body>
-<script src="player.js"></script>
+<script src="player.umd.js"></script>
 <script>
   // expose Clappr to load additional plugins
   window.Clappr = window.VOCPlayer
@@ -86,16 +53,16 @@ We recommend the following CSS for correct 16:9 player ratio:
 }
 ```
 
-You can take a look at <examples/iframe/index.html> for a working example.
+You can take a look at [examples/umdEmbed/index.html](./examples/umdEmbed/index.html) for a working example.
 
-### Using CommonJS (Coming soon)
+### Using CommonJS
 Install the player
 ```bash
 npm install --save voc-player
 ```
 
 And import it into your js/ts
-```
+```js
 import {Player} from "voc-player";
 Player({
   // C3VOC specific options

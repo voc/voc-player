@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>C3VOC player static js example</title>
+  <style>
+    body{
+      margin: 0;
+      font-family: sans-serif;
+    }
+    .container{
+      max-width: 1400px;
+      margin: 0 10px;
+    }
+
+    @media (min-width: 1024px) {
+      .container{
+        width: 70%;
+        margin: 0 auto;
+      }
+    }
+
+    #player > [data-player] {
+      padding-bottom: 56.25%;
+      height: auto !important;
+    }
+    #player > .fullscreen[data-player] {
+      padding-bottom: 0;
+      height: 100% !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Page dev page</h1>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam necessitatibus sunt aspernatur illo, nihil, quo sed officiis cupiditate consectetur quis veniam est, voluptas vitae fugiat! Quod deleniti, voluptatum labore officiis.</p>
+
+    <h2>Stream</h2>
+    <div id="player"></div>
+  </div>
+
+  <script type="module">
+    import {Player} from "/src/library.js";
+    const player = new Player({
+      //** C3VOC specific options **
+      vocStream: "s1",
+      //vocLecture: "36c3-10652-bahnmining_-_punktlichkeit_ist_eine_zier",
+      //preferredAudioLanguage: "translated", // untranslated, translated, translated2...
+
+      // H264 only VOC stream
+      h264Only: true,
+
+      //** Standard clappr.io Options **
+      // Use custom source
+      //sources: ["http://cdn.c3voc.de/relive/divoc/8/index.m3u8"],
+
+      // Audio only player
+      //audioOnly: true,
+
+      // Set a custom poster
+      //poster: "http://cdn.c3voc.de/thumbnail/sloop/poster.jpeg",
+
+      // Enable autoplay
+      //autoPlay: true,
+
+      // Assign parent by id
+      //parentId: "#player"
+    })
+
+    // Or attach asynchronously
+    player.attachTo(document.getElementById("player"));
+  </script>
+</body>
+</html>

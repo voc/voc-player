@@ -1,6 +1,6 @@
 import { Events, Styler, UICorePlugin, template } from "@clappr/core";
-import pluginHtml from "!html-loader!./levelSelector.html";
-import pluginStyle from "./levelSelector.scss";
+import pluginHtml from "./levelSelector.html?raw";
+import pluginStyle from "./levelSelector.scss?inline";
 
 const AUTO = -1;
 
