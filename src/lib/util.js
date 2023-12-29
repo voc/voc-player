@@ -1,30 +1,6 @@
 import {serialize} from "lib/url";
 
 /**
- * Checks status of http media file
- * @param {*} url
- * @param {*} callback
- */
-export function checkMedia(url, callback) {
-  if (!callback || typeof(callback) !== "function") {
-    throw new Error(`Excepted function, got '${callback}'`)
-  }
-  const xhr = new XMLHttpRequest();
-  xhr.onreadystatechange = function() {
-    if (this.readyState === XMLHttpRequest.HEADERS_RECEIVED) {
-      if (this.status === 200) {
-        callback(true);
-      } else {
-        callback(false);
-      }
-      xhr.abort();
-    }
-  }
-  xhr.open("GET", url, true);
-  xhr.send(null);
-};
-
-/**
  * Load image in the background.
  * @param {*} url image url
  * @returns Promise Fulfilled when image has finished loading

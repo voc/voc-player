@@ -4,7 +4,7 @@ import { Plugins } from "@clappr/plugins";
 import ErrorPlugin from "plugins/error";
 import AudioTrackSelector from "plugins/audioTrackSelector/audioTrackSelector";
 import LevelSelector from "plugins/levelSelector/levelSelector";
-import { checkMedia } from "lib/util";
+import { postData, checkMedia } from "lib/fetch";
 import { getBaseConfig, getLectureConfig, getStreamConfig } from "lib/config";
 import "public/style.scss";
 
@@ -42,7 +42,7 @@ for (let plugin of [
   WaterMark,
   ErrorPlugin,
   AudioTrackSelector,
-  LevelSelector
+  LevelSelector,
 ]) {
   Loader.registerPlugin(plugin);
 }
@@ -59,6 +59,10 @@ const isHlsError = (error, code) => {
   return error.origin == "hls" && error.raw.response.code == code;
 };
 
+const sleep = (ms) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
+
 /**
  * Shaka-Player wrapper
  */
@@ -67,6 +71,10 @@ export default class VOCPlayer extends BaseObject {
     super();
     this.timeout = DEFAULT_TIMEOUT;
     this.maxTimeout = MAX_TIMEOUT;
+    this._events = [];
+    this._buffering = false;
+    this._lastSeek = 0;
+    this._vocStream = options.vocStream;
 
     // Async configuration
     this._playerPromise = this._getConfig(options).then((config) => {
@@ -142,6 +150,7 @@ export default class VOCPlayer extends BaseObject {
 
     this.listenTo(this._player, Events.PLAYER_PLAY, this._handlePlay);
     this.listenTo(this._player, Events.PLAYER_STOP, this._handleStop);
+    this.listenTo(this._player, Events.PLAYER_SEEK, this._handleSeek);
     this.listenTo(
       core,
       Events.CORE_ACTIVE_CONTAINER_CHANGED,
@@ -162,6 +171,26 @@ export default class VOCPlayer extends BaseObject {
       Events.CONTAINER_MEDIACONTROL_SHOW,
       this._handleMediaControlShow
     );
+    this.listenTo(
+      core.getCurrentPlayback(),
+      Events.PLAYBACK_BUFFERING,
+      this._handleBuffering
+    );
+    this.listenTo(
+      core.getCurrentPlayback(),
+      Events.PLAYBACK_BITRATE,
+      this._handleBitrate
+    );
+
+    const playback = core.getCurrentPlayback();
+    if (playback._hls) {
+      playback._hls.on("hlsManifestLoaded", (event, data) => {
+        if (!data.url) return;
+        const url = new URL(data.url);
+        this._relay = url.hostname;
+        console.log("got relay", this._relay)
+      })
+    }
   }
 
   /**
@@ -203,8 +232,12 @@ export default class VOCPlayer extends BaseObject {
    * @param {*} clearOverlay Function to remove error overlay after recovery
    */
   _handleError(error, clearOverlay) {
+    this._appendEvent({
+      type: "error",
+    });
     if (this._recovery) {
-      clearTimeout(this._recovery.timeout);
+      // already recovering
+      return;
     } else {
       this._player.stop();
     }
@@ -247,6 +280,9 @@ export default class VOCPlayer extends BaseObject {
       this._recovery.clearOverlay();
       clearTimeout(this._recovery.timeout);
       this._recovery = null;
+      this._appendEvent({
+        type: "recovery",
+      });
     }
 
     this._resetTimeout();
@@ -262,12 +298,20 @@ export default class VOCPlayer extends BaseObject {
     }
   }
 
+  _handleSeek(time) {
+    this._lastSeek = Date.now();
+  }
+
   /**
    * Skips to the live-edge after recovery
    */
   _handleBufferFull() {
+    this._buffering = false;
+    if (!this._recovery)
+      return;
+
+    console.log(`recovered? playbackType=${this._container.playback.getPlaybackType()}`)
     if (
-      this._recovery &&
       this._container.playback.getPlaybackType() == "live"
     ) {
       console.log("seeking to end for recovery");
@@ -276,35 +320,112 @@ export default class VOCPlayer extends BaseObject {
     }
   }
 
-  /**
-   * Handles media check result, starts playback if check was successful
-   * @param {boolean} success
-   */
-  _handleMediaCheck(success) {
-    if (success) {
-      console.log("try playing again, media should be available");
-      this._player.play();
-    } else {
-      const timeout = this._getTimeout();
-      console.log(
-        `test for media failed, retrying in ~${Math.round(timeout)}s`
-      );
-      setTimeout(this._waitForMedia.bind(this), timeout * 1000);
+  _handleBuffering() {
+    this._buffering = true;
+    if (Date.now() - this._lastSeek > 1000) {
+      this._appendEvent({
+        type: "buffering",
+      });
+    }
+  }
+
+  _handleBitrate(bitrate) {
+    if (!this._lastBitrate) {
+      this._lastBitrate = bitrate;
+      return;
+    }
+
+    if (!bitrate.bitrate || !this._lastBitrate.bitrate) {
+      this._lastBitrate = bitrate;
+      return;
+    }
+
+    // same bitrate
+    if (bitrate.bitrate === this._lastBitrate.bitrate) return;
+
+    // if we changed quality up
+    const isUp = bitrate.bitrate - this._lastBitrate.bitrate > 0;
+    this._lastBitrate = bitrate;
+
+    // If we are buffering already, the player is probably just rotating through its qualities
+    if (this._buffering) return;
+
+    this._appendEvent({
+      type: "quality_switch",
+      isUp: isUp,
+    });
+  }
+
+  _appendEvent(event) {
+    // we are only interested in live
+    if (this._container.playback.getPlaybackType() !== "live") return;
+    console.log("player event", event);
+    event.time = Date.now();
+    if (this._vocStream) event.slug = this._vocStream;
+    if (this._relay) event.relay = this._relay;
+    this._events.push(event);
+    this._sendStats();
+  }
+
+  async _sendStats() {
+    // send already queued
+    if (this._statsTimeout) return;
+
+    this._statsTimeout = setTimeout(
+      this._doSendStats.bind(this),
+      Math.random() * 5000
+    );
+  }
+
+  async _doSendStats() {
+    let retry = 3000;
+    // retry sending with backoff
+    while (true) {
+      try {
+        const data = [];
+        const now = Date.now();
+        // push events with relative offset (in case our clocks are not synced)
+        for (const ev of this._events) {
+          data.push({ ...ev, offset: (now - ev.time) / 1000, time: undefined });
+        }
+        await postData("https://cdn.c3voc.de/stats/", data);
+        this._events = [];
+        this._statsTimeout = undefined;
+        return;
+      } catch (err) {
+        console.error("failed to report stats", err);
+      }
+      await sleep(retry*0.5 + Math.random()*0.5*retry);
+      retry *= 2;
     }
   }
 
   /**
    * Try to check and wait for upstream media file
    */
-  _waitForMedia() {
+  async _waitForMedia() {
     let source = this._player.options.source;
     if (source && source.source) {
       source = source.source;
     }
-    if (typeof source == "string") {
-      checkMedia(source, this._handleMediaCheck.bind(this));
-    } else {
+
+    if (typeof source !== "string") {
       this.reset();
+      return;
+    }
+
+    console.log("waiting for media", source);
+    try {
+      await checkMedia(source);
+      console.log("try playing again, media should be available");
+      this._player.play();
+    } catch (err) {
+      const timeout = this._getTimeout();
+      console.log(
+        `test for media failed, retrying in ~${Math.round(timeout)}s`,
+        err
+      );
+      setTimeout(this._waitForMedia.bind(this), timeout * 1000);
     }
   }
 
