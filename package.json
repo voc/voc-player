@@ -1,6 +1,6 @@
 {
   "name": "@c3voc/player",
-  "version": "1.3.0",
+  "version": "2.0.0",
   "description": "C3VOC HTML5 player component",
   "homepage": "https://github.com/voc/voc-player",
   "dependencies": {

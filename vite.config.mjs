@@ -21,4 +21,7 @@ export default defineConfig({
       public: "/src/public",
     },
   },
+  define: {
+    PLAYER_VERSION: JSON.stringify(process.env.npm_package_version),
+  },
 });

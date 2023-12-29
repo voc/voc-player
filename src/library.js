@@ -24,4 +24,4 @@ export {
   $
 } from "@clappr/core";
 
-console.log("VOC player 1.3.0")
+console.log(`VOC player ${PLAYER_VERSION}`)
