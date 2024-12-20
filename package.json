@@ -1,20 +1,20 @@
 {
   "name": "@c3voc/player",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "C3VOC HTML5 player component",
   "homepage": "https://github.com/voc/voc-player",
   "dependencies": {
     "@c3voc/clappr-hlsjs-playback": "^1.1.1",
-    "@clappr/core": "^0.4.27",
-    "@clappr/plugins": "^0.5.0"
+    "@clappr/core": "^0.11.3",
+    "@clappr/plugins": "^0.8.3"
   },
   "main": "./dist/player.umd.js",
   "module": "./dist/player.mjs",
   "devDependencies": {
-    "ava": "^6.0.1",
+    "ava": "^6.2.0",
     "sass": "^1.69.5",
-    "vite": "^5.0.10",
-    "vite-tsconfig-paths": "^4.2.2"
+    "vite": "^5.0.13",
+    "vite-tsconfig-paths": "^4.2.3"
   },
   "scripts": {
     "test": "ava",
