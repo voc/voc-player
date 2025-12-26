@@ -123,8 +123,10 @@ export default class VOCPlayer extends BaseObject {
         options.preferredAudioLanguage,
         this._handleError.bind(this)
       );
+    } else if (options.vocLectureGuid) {
+      configPromise = getLectureConfig(options.vocLectureGuid, 'guid');
     } else if (options.vocLecture) {
-      configPromise = getLectureConfig(options.vocLecture);
+      configPromise = getLectureConfig(options.vocLecture, 'slug');
     }
 
     // Combine configs
