@@ -4,9 +4,9 @@
   "description": "C3VOC HTML5 player component",
   "homepage": "https://github.com/voc/voc-player",
   "dependencies": {
-    "@c3voc/clappr-hlsjs-playback": "^1.1.1",
-    "@clappr/core": "^0.11.3",
-    "@clappr/plugins": "^0.8.3"
+    "@clappr/hlsjs-playback": "^1.9.4",
+    "@clappr/core": "^0.13.2",
+    "@clappr/plugins": "^0.8.11"
   },
   "main": "./dist/player.umd.js",
   "module": "./dist/player.mjs",

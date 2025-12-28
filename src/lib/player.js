@@ -1,5 +1,5 @@
 import { Player, Events, BaseObject, Loader } from "@clappr/core";
-import HLSPlayback from "@c3voc/clappr-hlsjs-playback";
+import HLSPlayback from "@clappr/hlsjs-playback";
 import { Plugins } from "@clappr/plugins";
 import ErrorPlugin from "plugins/error";
 import AudioTrackSelector from "plugins/audioTrackSelector/audioTrackSelector";
