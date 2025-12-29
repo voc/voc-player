@@ -51,13 +51,24 @@ const queryGraph = function(operationName, query, variables={}) {
 };
 
 /**
- * Finds player sources for a media.ccc.de lecture by slug
- * @param {string} slug
+ * Finds player sources for a media.ccc.de lecture by slug or guid
+ * @param {string} slug_or_guid
+ * @param {string} id_type 'slug' or 'guid'
  */
-export function getMediaLectureSources(slug) {
-  return queryGraph("LectureBySlug", `
-    query LectureBySlug($slug: ID!) {
-      lecture: lectureBySlug(slug: $slug) {
+export function getMediaLectureSources(slug_or_guid, id_type='slug') {
+
+  let operationName, resolver;
+  if (id_type === 'guid') {
+    operationName = 'LectureByGuid';
+    resolver = 'lecture';
+  } else {
+    id_type = 'slug';
+    operationName = 'LectureBySlug';
+    resolver = 'lecture: lectureBySlug';
+  }
+
+  return queryGraph(operationName, `query ${operationName}($id: ID!) {
+      ${resolver}(${id_type}: $id) {
         originalLanguage
         timelens { thumbnailsUrl, timelineUrl }
         videos { label, source: url, mimeType }
@@ -66,8 +77,8 @@ export function getMediaLectureSources(slug) {
         playerConfig
       }
     }
-  `, { slug }).then(res => {
-    if (!res.data.lecture)
+  `, { id: slug_or_guid }).then(res => {
+    if (!res.data?.lecture)
       throw new Error("Lecture could not be found");
 
     return res.data.lecture

@@ -1,5 +1,5 @@
 # voc-player
-C3VOC HTML5-Webplayer based on [clappr](https://github.com/clappr/clappr). Can be used to embed C3VOC streams into your own webpages.
+C3VOC HTML5 web player based on [clappr](https://github.com/clappr/clappr). Can be used to embed C3VOC streams into your own webpages.
 
 ## Usage
 You can embed the player using a variety of methods. We support the following configurations:
@@ -89,7 +89,7 @@ Add ```vocStream: "$stream"``` to play a C3VOC livestream with name $stream.
 You can query <https://streaming.media.ccc.de/streams/v2.json> to find out which stream name a conference room may be using.
 
 #### Lecture sources
-Add ```vocLecture: "$slug"``` to play a lecture from media.ccc.de with the slug $slug.
+Add ```vocLectureGuid: "$guid"``` or ```vocLecture: "$slug"``` to play a lecture from media.ccc.de with the guid $guid or slug $slug.
 
 ### standard clappr options
 

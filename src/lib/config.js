@@ -139,8 +139,8 @@ export const getStreamConfig = (stream, audioOnly, h264Only, preferredAudioLangu
  * Determines config specific to media.ccc.de lecture
  * @param {string} slug
  */
-export const getLectureConfig = function (slug, reliveOffset) {
-  return getMediaLectureSources(slug).then(data => {
+export const getLectureConfig = function (slug_or_guid, id_type, reliveOffset) {
+  return getMediaLectureSources(slug_or_guid, id_type).then(data => {
     return {
       sources: data.videos || data.relive?.playlistCut || data.relive?.playlist,
       poster: data.images?.posterUrl,
